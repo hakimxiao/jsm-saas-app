@@ -1,0 +1,79 @@
+Clerk adalah sebuah framework atau kerangka kerja siap pakai yang sangat bagus ,
+Bisa untuk Authentikasi dll. Berikut contoh dari Authentikasi menggunakan Clerk :
+    Langkah-Langkah Mengsetup Clerk : 
+        *   Menginstalll clerk sangat luar biasa mudah karena kita hanya ada 4 tahap, dan kita tidak perlu 
+            membuat logic serta UI karena sudah di handle dengan sangat sempurnba oleh clerk. 
+            https://dashboard.clerk.com/apps/app_30xHq7ppGmdF5g8WS18MoiV1XIA/instances/ins_30xHqCz54n3LxPlFD5KOsrluE00
+            https://clerk.com/docs/quickstarts/nextjs
+                1.  Install @clerk/nextjs : npm install @clerk/nextjs | Kemudian kita buat didalam root project kita sebuah 
+                    file middleware yang isinya : 
+                        import { clerkMiddleware } from '@clerk/nextjs/server';
+
+                        export default clerkMiddleware();
+
+                        export const config = {
+                            matcher: [
+                                // Skip Next.js internals and all static files, unless found in search params
+                                '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+                                // Always run for API routes
+                                '/(api|trpc)(.*)',
+                            ],
+                        };
+                2.  Buat file .env dan isikan didalam tersebut 2 hal yaitu : NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY & CLERK_SECRET_KEY
+                3.  Masukkan komponen <ClerkProvider></ClerkProvider> didalam layout utama applikasi : 
+                        return (
+                            <html lang="en">
+                            <body className={`${bricolage.variable} antialiased`}>
+                                <ClerkProvider appearance={{ variables: { colorPrimary: "#fe5933" } }}>
+                                <Navbar />
+                                {children}
+                                </ClerkProvider>
+                            </body>
+                            </html>
+                        );
+                    -- Bisa langsung masukkan komponen ini ke layout atau di masukkan di navbar  : 
+                        import {
+                                ClerkProvider,
+                                SignInButton,
+                                SignUpButton,
+                                SignedIn,
+                                SignedOut,
+                                UserButton,
+                            } from '@clerk/nextjs'
+                    
+                        *- SignInButton :   Tombol yang jika diklik kita akan diarahkan ke UI login dengan email dan provider google
+                        *- SignUpButton :   Tombol SignUp yang digunakan untuk mendaftarkan user
+                        *- SignedIn     :   Sebuah Componen yang akan mereder child didalamnya jika user sudah signIn
+                        *- SignedOut    :   Sebuah Componen yang akan mereder child didalamnya jika user belum signIn 
+                        *- UserButton   :   Sebuah Componen yang akan menampilkan informasi user berupa avatar dan jika di klik akan 
+                                            menampilkan informasi detailt
+                
+                4.  Meletakan component Yang berhubungan authentikasi didalam navbar :
+                        const Navbar = () => {
+                            return (
+                                <nav className="navbar">
+                                    <Link href="/">
+                                        <div className="flex items-center gap-2.5 cursor-pointer">
+                                        <Image src="/images/logo.svg" alt="logo" width={46} height={44} />
+                                        </div>
+                                    </Link>
+
+                                    <div className="flex items-center gap-8">
+                                        <NavItems />
+                                        <SignedOut>
+                                            <SignInButton>
+                                                <button className="btn-signin">Sign In</button>
+                                            </SignInButton>
+                                        </SignedOut>
+                                        <SignedIn>
+                                            <UserButton />
+                                        </SignedIn>
+                                    </div>
+                                </nav>
+                            );
+
+*   Di aplikasi ini kita buat route nya dari aplikasi kita sendiri
+        di dokumentasi (create custom sign in)
+*   Untuk informasi lebih detail di <UserButton />, Kita tinggal ke dahbopard clerk di project kita klik configure
+        secrll kebawah dan kalian akan mendapati toggle buton tinggal di klik saja
+*   Untuk melakukkan desain Sign In clerk nya di panel kiri buka Account Portal dan klik customization
