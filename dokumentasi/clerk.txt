@@ -91,3 +91,31 @@ BILLING WITH CLERK :
         4.  Silahkan baca documentasi yang diberikan untuk membuat PricingTable
         5.  Dan jika PricingTable sudah di panggil bum anda akan langsung dapat UI iklan yang bagus.
         6.  Silahkan klik properti billing di profile jika ingin lihat detail subscription.
+
+
+
+MENGINTEGRASIKAN SUPABASE DENGAN CLERK :
+---------------------------------------
+    Di menu configure di panel menu bagian kiri anda silahkan scroll aja di bagian developer anda akan menemukan :
+        1.  Temukan menu integration di developer menu di configure pada clerk
+        2.  Aktivkan dan klik manage itegration silahkan di sesuaikan dan jika sesuai di point 3 
+            kita disuruh copy domain diberikan ke dalam thrid party supabase. Silahkan klik tulisan biru
+            maka akan di arahkan di supabase kemudian anda pilih project yang dibuat tadi di supabase 
+            dan copy url dari clerk tadi di Sign-in/Provider. add provider.
+        3.  Setelah itu silahkankalian create table di menu panel kiri ada menu create table.
+    *** 4.  Okeh setelah selesai membuat table KITA HARUS MELAKUKKAN SETUP DATABASE PRIVACY 
+            ini bagus untuk membatasi akses jika user sebagai anon(belum login) dan authenticated(login)
+        5.  Pergi ke authentication di panel kiri gambar gembok - KLIK POLICY - Kemudian anda akan melihat 2
+            buah tablkle yang kita buat tadi di pojok kanan ada tombol - create policy - Silahkan anda buat 
+            jika umum boleh menggunakan all jika login bisa menggunakan nama clerk dan untuk role login authenticated
+            jika tidak anon dan untuk query : 
+
+            Tambahkan ini dibagian yang login di 2 baris komentar
+                LOGIN : {
+                    ((SELECT auth.jwt() AS jwt) IS NOT NULL)
+                }
+
+            Tambahkan ini dibagian yang anon di 1 baris komentar
+                ANON : {
+                    true
+                }
