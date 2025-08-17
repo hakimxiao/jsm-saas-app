@@ -27,6 +27,7 @@ const CompanionComponent = ({
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [messages, setMessages] = useState<SavedMessage[]>([]);
 
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
@@ -45,7 +46,13 @@ const CompanionComponent = ({
 
     const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
 
-    const onMessage = () => {};
+    const onMessage = (message: Message) => {
+      if (message.type === "transcript" && message.transcriptType === "final") {
+        const newMessage = { role: message.role, content: message.transcript };
+
+        setMessages((prev) => [newMessage, ...prev]);
+      }
+    };
 
     const onSpeechStart = () => setIsSpeaking(true);
     const onSpeechEnd = () => setIsSpeaking(false);
@@ -99,7 +106,7 @@ const CompanionComponent = ({
   };
 
   return (
-    <section className="flex flex-col h-[70vh]">
+    <section className="flex flex-col h-[70vh] xl:h-[90vh]">
       <section className="flex gap-8 max-sm:flex-col">
         <div className="companion-section">
           <div
@@ -108,7 +115,7 @@ const CompanionComponent = ({
           >
             <div
               className={cn(
-                "absolute transition-opacity duration-100",
+                "absolute transition-opacity duration-1000",
                 callStatus === CallStatus.FINISHED ||
                   callStatus === CallStatus.INACTIVE
                   ? "opacity-100"
@@ -128,7 +135,7 @@ const CompanionComponent = ({
 
             <div
               className={cn(
-                "absolute transition-opacity duration-100",
+                "absolute transition-opacity duration-1000",
                 callStatus === CallStatus.ACTIVE ? "opacity-100" : "opacity-0"
               )}
             >
@@ -156,7 +163,11 @@ const CompanionComponent = ({
             <p className="font-bold text-2xl">{userName}</p>
           </div>
 
-          <button className="btn-mic" onClick={toggleMicrophone}>
+          <button
+            className="btn-mic"
+            onClick={toggleMicrophone}
+            disabled={callStatus !== CallStatus.ACTIVE}
+          >
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
@@ -171,7 +182,7 @@ const CompanionComponent = ({
           <button
             className={cn(
               "rounded-lg py-2 cursor-pointer transition-colors w-full text-white",
-              callStatus === CallStatus.ACTIVE ? "bg-rose-700" : "bg-primary",
+              callStatus === CallStatus.ACTIVE ? "bg-red-700" : "bg-primary",
               callStatus === CallStatus.CONNECTING && "animate-pulse"
             )}
             onClick={
@@ -188,7 +199,24 @@ const CompanionComponent = ({
       </section>
 
       <section className="transcript">
-        <div className="transcript-message no-scrollbar">MESSAGE</div>
+        <div className="transcript-message no-scrollbar">
+          {messages.map((message, idx) => {
+            if (message.role === "assistant") {
+              return (
+                <p key={idx} className="max-sm:text-sm">
+                  {name.split(" ")[0].replace("/[.,]/g, ", " ")}:{" "}
+                  {message.content}
+                </p>
+              );
+            } else {
+              return (
+                <p key={idx} className="text-primary max-sm:text-sm">
+                  {userName}: {message.content}
+                </p>
+              );
+            }
+          })}
+        </div>
 
         <div className="transcript-fade" />
       </section>
