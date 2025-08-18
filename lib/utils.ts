@@ -28,7 +28,8 @@ export const configureAssistant = (voice: string, style: string) => {
     },
     voice: {
       provider: "11labs",
-      model: voiceId === "I7sakys8pBZ1Z5f0UhT9" ? "eleven_flash_v2_5" : "eleven_turbo_v2_5",
+      // model: voiceId === "I7sakys8pBZ1Z5f0UhT9" ? "eleven_flash_v2_5" : "eleven_turbo_v2_5",
+      model: "eleven_multilingual_v2",
       voiceId: voiceId,
       // language: 'id',
       stability: 0.4,
